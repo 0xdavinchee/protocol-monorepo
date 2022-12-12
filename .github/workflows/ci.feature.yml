@@ -18,7 +18,7 @@ jobs:
   check:
     name: Checking what packages need to be built
 
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     outputs:
       build_ethereum_contracts: ${{ env.BUILD_ETHEREUM_CONTRACTS }}
@@ -44,7 +44,7 @@ jobs:
   test-ethereum-contracts:
     name: Build and test ethereum-contracts (Feature Branch)
 
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     needs: [check]
     if: needs.check.outputs.build_ethereum_contracts
