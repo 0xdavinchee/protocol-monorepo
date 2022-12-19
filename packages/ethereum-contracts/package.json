@@ -26,8 +26,7 @@
         "/build/typechain/**/*"
     ],
     "main": "./scripts/index.js",
-    "typings": "./types/index.d.ts",
-    "scripts": {
+    "typings": "./types/index.d.ts",    "scripts": {
         "dev": "tasks/dev.sh",
         "clean": "rm -rf node_modules; rm -rf cache; rm -rf build; rm -rf artifacts; rm -rf typechain-types; rm -rf scripts/*.d.ts scripts/*.d.ts.map",
         "run-hardhat": "IS_HARDHAT=true hardhat",
