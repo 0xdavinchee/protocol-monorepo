@@ -10,6 +10,7 @@ import {config as dotenvConfig} from "dotenv";
 import {NetworkUserConfig} from "hardhat/types";
 import "solidity-docgen";
 import {relative} from "path";
+import "@ignored/hardhat-ignition";
 
 try {
     dotenvConfig();

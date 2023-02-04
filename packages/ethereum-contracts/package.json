@@ -81,6 +81,8 @@
         "stack-trace": "0.0.10"
     },
     "devDependencies": {
+        "@ignored/ignition-core": "0.0.7",
+        "@ignored/hardhat-ignition": "0.0.7",
         "@nomiclabs/hardhat-truffle5": "^2.0.7",
         "async": "^3.2.4",
         "csv-writer": "^1.6.0",
