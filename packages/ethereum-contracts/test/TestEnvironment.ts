@@ -1,12 +1,14 @@
 import fs from "fs";
 
 import {createObjectCsvWriter as createCsvWriter} from "csv-writer";
-import {BigNumber} from "ethers";
+import {BigNumber, Contract} from "ethers";
 import {artifacts, assert, ethers, expect, network, web3} from "hardhat";
 import _ from "lodash";
 import Web3 from "web3";
 
 import {
+    ConstantInflowNFT,
+    ConstantOutflowNFT,
     ISuperToken,
     ISuperToken__factory,
     SuperTokenMock,
@@ -541,6 +543,54 @@ export default class TestEnvironment {
             )
         );
     }
+
+    deployNFTContracts = async () => {
+        const constantOutflowNFTLogic =
+            await this.deployContract<ConstantOutflowNFT>(
+                "ConstantOutflowNFT",
+                this.contracts.cfa.address
+            );
+        const constantInflowNFTLogic =
+            await this.deployContract<ConstantInflowNFT>(
+                "ConstantInflowNFT",
+                this.contracts.cfa.address
+            );
+        return {constantOutflowNFTLogic, constantInflowNFTLogic};
+    };
+
+    deployContract = async <T>(contractName: string, ...args: any) => {
+        const contractFactory = await ethers.getContractFactory(contractName);
+        const contract = await contractFactory.deploy(...args);
+
+        return contract as T;
+    };
+
+    /**
+     * Deploys an external library with name: externLibraryName and links it to
+     * with the contract factory for the contract with name: contractName
+     * @param externalLibraryName
+     * @param contractName
+     * @param contractArgs
+     * @returns deployed contract
+     */
+    deployExternalLibraryAndLink = async <T>(
+        externalLibraryName: string,
+        contractName: string,
+        ...contractArgs: any
+    ): Promise<T> => {
+        const externalLibrary = await this.deployContract<Contract>(
+            externalLibraryName
+        );
+        const contractFactory = await ethers.getContractFactory(contractName, {
+            libraries: {
+                [externalLibraryName]: externalLibrary.address,
+            },
+        });
+
+        const contract = await contractFactory.deploy(...contractArgs);
+
+        return contract as T;
+    };
 
     /**************************************************************************
      * Test data functions

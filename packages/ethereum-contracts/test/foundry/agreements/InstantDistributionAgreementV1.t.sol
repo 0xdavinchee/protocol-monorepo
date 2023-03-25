@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPLv3
-pragma solidity 0.8.16;
+pragma solidity 0.8.19;
 
 import "../FoundrySuperfluidTester.sol";
 
@@ -52,7 +52,7 @@ contract InstantDistributionAgreementV1Anvil is FoundrySuperfluidTester {
         assertEq(totalUnitsApproved, units);
         assertEq(totalUnitsPending, 0);
 
-        assertTrue(checkAllInvariants());
+        assert_Global_Invariants();
     }
 
 }

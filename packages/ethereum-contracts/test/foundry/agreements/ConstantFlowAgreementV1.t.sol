@@ -1,13 +1,15 @@
 // SPDX-License-Identifier: AGPLv3
-pragma solidity 0.8.16;
+pragma solidity 0.8.19;
 
-import "../FoundrySuperfluidTester.sol";
-
+import {
+    CFAv1Library,
+    FoundrySuperfluidTester
+} from "../FoundrySuperfluidTester.sol";
 
 contract ConstantFlowAgreementV1Anvil is FoundrySuperfluidTester {
     using CFAv1Library for CFAv1Library.InitData;
 
-    constructor () FoundrySuperfluidTester(3) { }
+    constructor() FoundrySuperfluidTester(3) {}
 
     function testAlice2Bob(uint32 a) public {
         vm.assume(a > 0);
@@ -21,7 +23,7 @@ contract ConstantFlowAgreementV1Anvil is FoundrySuperfluidTester {
         assertEq(sf.cfa.getNetFlow(superToken, alice), -flowRate);
         assertEq(sf.cfa.getNetFlow(superToken, bob), flowRate);
 
-        assertTrue(checkAllInvariants());
+        assert_Global_Invariants();
     }
 
     function testBobAliceLoop(uint32 a) public {
@@ -40,6 +42,6 @@ contract ConstantFlowAgreementV1Anvil is FoundrySuperfluidTester {
         assertEq(sf.cfa.getNetFlow(superToken, alice), 0);
         assertEq(sf.cfa.getNetFlow(superToken, bob), 0);
 
-        assertTrue(checkAllInvariants());
+        assert_Global_Invariants();
     }
 }
