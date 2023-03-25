@@ -1,9 +1,11 @@
-const {buildModule} = require("@ignored/hardhat-ignition");
+import {buildModule} from "@ignored/hardhat-ignition";
 const {ethers} = require("hardhat");
 
 const ACCOUNT_0 = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266";
 
-module.exports = buildModule("TestFrameworkModule", (m) => {
+// @note comment out the libraries to run npx hardhat plan TestFrameworkModule
+
+export default buildModule("TestFrameworkModule", (m) => {
     const host = m.contract("Superfluid", {args: [true, false]});
     const testGovernance = m.contract("TestGovernance");
 
@@ -24,14 +26,33 @@ module.exports = buildModule("TestFrameworkModule", (m) => {
         args: [host],
         libraries: {SlotsBitmapLibrary: slotsBitmapLibrary},
     });
+
     // register ida as an agreement class so it is trusted by the host
     m.call(testGovernance, "registerAgreementClass", {
         args: [host, idaV1],
     });
 
-    const superTokenFactoryHelper = m.contract("SuperTokenFactoryHelper");
+    // deploy COF NFT logic contract
+    const constantOutflowNFTLogic = m.contract("ConstantOutflowNFT", {
+        args: [cfaV1],
+    });
+    
+    // deploy CIF NFT logic contract
+    const constantInflowNFTLogic = m.contract("ConstantInflowNFT", {
+        args: [cfaV1],
+    });
+
+    const superfluidNFTDeployerLibrary = m.library(
+        "SuperfluidNFTDeployerLibrary",
+        {}
+    );
+    // Deploy SuperToken logic contract (holds the canonical NFT logic contracts-deterministically)
+    const superTokenLogic = m.contract("SuperToken", {
+        args: [host, constantOutflowNFTLogic, constantInflowNFTLogic],
+        libraries: {SuperfluidNFTDeployerLibrary: superfluidNFTDeployerLibrary},
+    });
     const superTokenFactory = m.contract("SuperTokenFactory", {
-        args: [host, superTokenFactoryHelper],
+        args: [host, superTokenLogic],
     });
     const testResolver = m.contract("TestResolver", {args: [ACCOUNT_0]});
 
@@ -54,7 +75,7 @@ module.exports = buildModule("TestFrameworkModule", (m) => {
 
     // initialize test governance
     m.call(testGovernance, "initialize", {
-        args: [host, ACCOUNT_0, 4 * 60 * 60, 30 * 60, []],
+        args: [host, ACCOUNT_0, 4 * 60 * 60, 30 * 60, [] as any],
     });
 
     // update logic contracts in the test governance
